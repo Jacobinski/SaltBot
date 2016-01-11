@@ -14,4 +14,4 @@ class Database:
             s = f.read()
             self.__database_dictionary = ast.literal_eval(s) #String -> Dictionary. Safe method which only creates primitives
 
-    def write_database(self):
+    def writeDatabase(self):

@@ -65,13 +65,5 @@ class WebBrowser:
         else:
             raise ValueError('Non-allowed player name passed to selectPlayer()')
 
-        '''
-        # Processes attributes of the elements
-        print(bet_status.text)
-        print('Player 1: ', player1.get_attribute('value'))
-        print('Player 2: ', player2.get_attribute('value'))
-        bet_input.send_keys(dollar.text[1:])
-        player2.click()
-        '''
 # Further Reading:
 # http://koaning.io/dynamic-scraping-with-python.html

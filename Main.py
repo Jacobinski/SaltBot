@@ -4,10 +4,13 @@ The main executing file in the SaltyBet Bot program. Controls the operation of a
 
 import time
 from WebBrowser import WebBrowser
+from Rating import ratingAdjust
 
 browser = WebBrowser()
 browser.login('http://www.saltybet.com/authenticate?signin=1')
 players = browser.getPlayers()
+
+
 balance = browser.getBalance()
 browser.selectPlayer('player1', balance/4)
 print("P1:", players.get('player1'))

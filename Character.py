@@ -9,3 +9,31 @@ hold a low confidence score due to varying results.
 '''
 
 import pickle
+
+
+class Character:
+
+    __name = None
+    #__confidence = None
+    __rating = None
+
+    def __init__(self, name):
+        self.name = name
+        self.rating = 1000  # Default value
+
+    '''
+    def setConfidence(self, confidence):
+        self.__confidence = confidence
+
+    def getConfidence(self):
+        return self.__confidence
+    '''
+
+    def setRating(self, rating):
+        self.__rating = rating
+
+    def getRating(self):
+        return self.__rating
+
+    def getName(self):
+        return self.__name
