@@ -1,28 +1,18 @@
-#TODO: Docstrings
+"""
+The main executing file in the SaltyBet Bot program. Controls the operation of all other submodules
+"""
+
 import time
-from selenium import webdriver
+from WebBrowser import WebBrowser
 
-time_elapsed = 0
-driver = webdriver.Firefox()    #Opens firefox
-driver.get('http://saltybet.com')
+browser = WebBrowser()
+browser.login('http://www.saltybet.com/authenticate?signin=1')
+players = browser.getPlayers()
+balance = browser.getBalance()
+browser.selectPlayer('player1', balance/4)
+print("P1:", players.get('player1'))
+print("P2:", players.get('player2'))
+print("%i placed on %s" %(balance/4, players.get('player1')))
 
-#These are full tag elements ie. <element> text </element>
-player1 = driver.find_element_by_id('player1')
-player2 = driver.find_element_by_id('player2')
-bet_status = driver.find_element_by_id('betstatus')
+browser.end()
 
-#Ensure we are in the betting round
-while bet_status.text != "Bets are OPEN!":
-    time_elapsed += 10
-    time.sleep(10)
-    print('Sleeping for %s seconds' %time_elapsed)
-
-#Processes attributes of the elements
-print(bet_status.text)
-print('Player 1: ', player1.get_attribute('value'))
-print ('Player 2: ', player2.get_attribute('value'))
-
-driver.close()
-
-#Further Reading:
-#http://koaning.io/dynamic-scraping-with-python.html
