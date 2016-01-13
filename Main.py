@@ -8,11 +8,10 @@ from Rating import ratingAdjust
 
 browser = WebBrowser()
 browser.login('http://www.saltybet.com/authenticate?signin=1')
+
 players = browser.getPlayers()
-
-
 balance = browser.getBalance()
-browser.selectPlayer('player1', balance/4)
+browser.bet('player1', balance/4)
 print("P1:", players.get('player1'))
 print("P2:", players.get('player2'))
 print("%i placed on %s" %(balance/4, players.get('player1')))

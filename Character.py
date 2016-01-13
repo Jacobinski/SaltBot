@@ -29,6 +29,11 @@ class Character:
         return self.__confidence
     '''
 
+    #Get tier -> These will be added during tournaments
+    # '<p class="bettor-line"><span class="goldtext">Tier </span>' + p2tier + '</p>' -> THis is in the source file for tournaments and betting and such
+    #A player can move up or down a tier by winning or losing 10 matches in a row
+    #www-cdn-jtvnw-x.js is the java file which will help me determine tournament status
+
     def setRating(self, rating):
         self.__rating = rating
 
