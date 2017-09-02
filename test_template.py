@@ -1,5 +1,4 @@
-# Filler content for py.test.
-# TODO: Change when we have code to test
+# Unit testing template
 def inc(x):
     return x + 1
 
