@@ -1,20 +1,38 @@
 """
-The main executing file in the SaltyBet Bot program. Controls the operation of all other submodules
+A python script for SaltBot
+
+Inspiration from:
+http://www.gregreda.com/2013/03/03/web-scraping-101-with-python/
+http://kazuar.github.io/scraping-tutorial/
 """
+import requests
+import yaml
 
-import time
-from WebBrowser import WebBrowser
-from Rating import ratingAdjust
+URL_SIGNIN = 'https://www.saltybet.com/authenticate?signin=1'
 
-browser = WebBrowser()
-browser.login('http://www.saltybet.com/authenticate?signin=1')
+def main():
+    with open("login.yaml", 'r') as stream:
+        try:
+            # Start a session so we can have persistant cookies
+            session = requests.session()
 
-players = browser.getPlayers()
-balance = browser.getBalance()
-browser.bet('player1', balance/4)
-print("P1:", players.get('player1'))
-print("P2:", players.get('player2'))
-print("%i placed on %s" %(balance/4, players.get('player1')))
+            # Obtain login specifics from login.yaml
+            login_yaml = yaml.load(stream)
 
-browser.end()
+            # This is the form data that the page sends when logging in
+            login_data = {
+                'email': login_yaml['email'],
+                'pword': login_yaml['password'],
+                'authenticate': 'signin'
+            }
 
+            # Authenticate
+            r = session.post(URL_SIGNIN, data=login_data)
+            print(r.url)
+
+        except yaml.YAMLError as exc:
+            print(exc)
+
+
+if __name__ == '__main__':
+    main()
