@@ -1,0 +1,7 @@
+# Filler content for py.test.
+# TODO: Change when we have code to test
+def inc(x):
+    return x + 1
+
+def test_answer():
+    assert inc(3) == 4
