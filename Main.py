@@ -1,10 +1,7 @@
 """
 A python script for SaltBot
-
-Inspiration from:
-http://www.gregreda.com/2013/03/03/web-scraping-101-with-python/
-http://kazuar.github.io/scraping-tutorial/
 """
+from bs4 import BeautifulSoup
 import requests
 import yaml
 
@@ -28,7 +25,22 @@ def main():
 
             # Authenticate
             r = session.post(URL_SIGNIN, data=login_data)
-            print(r.url)
+
+            # Check for successful login & redirect
+            if r.url != "https://www.saltybet.com/" and r.url != "http://www.saltybet.com/":
+                print("Error: Wrong URL: " + r.url)
+                return
+
+            # Scrape for values
+            soup = BeautifulSoup(r.content, 'html.parser')
+            balance = int(soup.find(id="balance").string.replace(',',''))r
+            print(balance)
+
+            '''
+            Betting is
+            selectedplayer:player1
+            wager:1
+            '''
 
         except yaml.YAMLError as exc:
             print(exc)
