@@ -4,8 +4,10 @@ A python script for SaltBot
 from bs4 import BeautifulSoup
 import requests
 import yaml
+import time
 
 URL_SIGNIN = 'https://www.saltybet.com/authenticate?signin=1'
+URL_BET = 'http://www.saltybet.com/ajax_place_bet.php'
 
 def main():
     with open("login.yaml", 'r') as stream:
@@ -31,16 +33,22 @@ def main():
                 print("Error: Wrong URL: " + r.url)
                 return
 
-            # Scrape for values
-            soup = BeautifulSoup(r.content, 'html.parser')
-            balance = int(soup.find(id="balance").string.replace(',',''))r
-            print(balance)
+            while(True):
+                # Add a delay to avoid overloading the server
+                time.sleep(40)
 
-            '''
-            Betting is
-            selectedplayer:player1
-            wager:1
-            '''
+                # Refresh and get the balance
+                r = session.get(r.url)
+                soup = BeautifulSoup(r.content, 'html.parser')
+                balance = int(soup.find(id="balance").string.replace(',',''))
+                print("balance: " + str(balance))
+
+                # Determine the state of the match
+                print(session.get("http://www.saltybet.com/state.json").text)
+
+                # Place the bet
+                red_bet = {'selectedplayer': 'player1', 'wager': '100'}
+                session.post(URL_BET, data=red_bet)
 
         except yaml.YAMLError as exc:
             print(exc)
