@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 import yaml
 import time
+import json
 
 URL_SIGNIN = 'https://www.saltybet.com/authenticate?signin=1'
 URL_BET = 'http://www.saltybet.com/ajax_place_bet.php'
@@ -44,11 +45,11 @@ def main():
                 print("balance: " + str(balance))
 
                 # Determine the state of the match
-                print(session.get("http://www.saltybet.com/state.json").text)
-
-                # Place the bet
-                red_bet = {'selectedplayer': 'player1', 'wager': '100'}
-                session.post(URL_BET, data=red_bet)
+                if(json.loads(session.get("http://www.saltybet.com/state.json").content)['status'] == 'open'):
+                    # Place the bet
+                    red_bet = {'selectedplayer': 'player1', 'wager': '500'}
+                    session.post(URL_BET, data=red_bet)
+                    print("Wager " + red_bet['wager'] + " on " + json.loads(session.get("http://www.saltybet.com/state.json").content)['p1name'])
 
         except yaml.YAMLError as exc:
             print(exc)
