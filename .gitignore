@@ -1,3 +1,14 @@
+# OSX file system information
 .DS_Store
+
+# Python virtualenv
 SaltBotEnv/
+
+# Login information
 login.yaml
+
+# Compiled files
+*.pyc
+
+# Cached files
+__pycache__/
