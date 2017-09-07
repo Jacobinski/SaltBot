@@ -5,11 +5,11 @@ An automatic betting program for www.saltybet.com
 
 ## Usage
 ### Authentication
-Create a file named **login.yaml** in the same directory as login.py. Add your SaltyBet account's username and password to it.
-```YAML
-# This is an example login.yaml
-email: someone@example.com
-password: examplepassword
+Create a file named **.env** in the same directory as login.py. Add your SaltyBet account's username and password to it in the following manner.
+```
+# Example Login Information for SaltBot
+EMAIL = "example@example.com"
+PASSWORD = "examplePassword123"
 ```
 ### Python Setup
 This bot is programmed in Python 2.7, so it must be installed on your machine. Check to make sure it is installed.

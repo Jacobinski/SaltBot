@@ -2,7 +2,8 @@
 The user login module for SaltBot
 '''
 import requests
-import yaml
+import os
+from dotenv import load_dotenv, find_dotenv
 
 URL_SIGNIN = 'https://www.saltybet.com/authenticate?signin=1'
 
@@ -11,29 +12,24 @@ def saltbot_login():
     session = None
     request = None
 
-    with open("login.yaml", 'r') as credentials:
-        try:
-            # Start a session so we can have persistant cookies
-            session = requests.session()
+    # Start a session so we can have persistant cookies
+    session = requests.session()
 
-            # Obtain login specifics from login.yaml
-            login_yaml = yaml.load(credentials)
+    # Obtain login specifics from .env
+    load_dotenv(find_dotenv())
 
-            # This is the form data that the page sends when logging in
-            login_data = {
-                'email': login_yaml['email'],
-                'pword': login_yaml['password'],
-                'authenticate': 'signin'
-            }
+    # This is the form data that the page sends when logging in
+    login_data = {
+        'email': os.environ.get('EMAIL'),
+        'pword': os.environ.get('PASSWORD'),
+        'authenticate': 'signin'
+    }
 
-            # Authenticate
-            request = session.post(URL_SIGNIN, data=login_data)
+    # Authenticate
+    request = session.post(URL_SIGNIN, data=login_data)
 
-            # Check for successful login & redirect
-            if request.url != "https://www.saltybet.com/" and request.url != "http://www.saltybet.com/":
-                print("Error: Wrong URL: " + request.url)
+    # Check for successful login & redirect
+    if request.url != "https://www.saltybet.com/" and request.url != "http://www.saltybet.com/":
+        print("Error: Wrong URL: " + request.url)
 
-        except yaml.YAMLError as exc:
-            print(exc)
-
-        return session, request
+    return session, request

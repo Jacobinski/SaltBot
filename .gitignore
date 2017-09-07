@@ -5,7 +5,7 @@
 SaltBotEnv/
 
 # Login information
-login.yaml
+.env
 
 # Compiled files
 *.pyc
