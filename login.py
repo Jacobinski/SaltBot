@@ -15,8 +15,9 @@ def saltbot_login():
     # Start a session so we can have persistant cookies
     session = requests.session()
 
-    # Obtain login specifics from .env
-    load_dotenv(find_dotenv())
+    # Obtain login specifics from .env if running locally
+    if os.environ.get('HEROKU') is None:
+        load_dotenv(find_dotenv())
 
     # This is the form data that the page sends when logging in
     login_data = {
