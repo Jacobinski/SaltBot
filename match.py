@@ -44,15 +44,21 @@ def record_match(session, request):
 
     while(True):
         # Add a delay to avoid overloading the server
-        time.sleep(10)
+        time.sleep(40)
 
         # Update match status
+        prev_status = match.get_status()
         match.update_match()
+        status = match.get_status()
 
-        # Print balance
-        print('Balance: ' + str(get_balance(session, request)))
+        if (prev_status == 'locked' and status == 'open'):
+            print('The match ends')
+            print('\nBetting is now open!')
+            print('Balance: ' + str(get_balance(session, request)))
 
-        # Determine the state of the match
-        if(match.get_status() == 'open'):
             # Place the bet
             bet_player1(session, 500)
+
+        elif (prev_status == 'open' and status == 'locked'):
+            print('\nThe match begins!')
+
