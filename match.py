@@ -37,6 +37,8 @@ class Match:
 def record_match(session, request):
     # Initialize a match
     site = website(session, request)
+    balance_start = None
+    balance_end = None
 
     while(True):
         # Add a delay to avoid overloading the server
@@ -44,26 +46,26 @@ def record_match(session, request):
 
         # Update status
         prev_status = site.get_betting_status()
-        prev_balance = site.get_balance()
         site.update()
         status = site.get_betting_status()
-        balance = site.get_balance()
 
         if (prev_status == 'locked' and status == 'open'):
-            if (balance > prev_balance):
+            balance_end = site.get_balance()
+            if (balance_end > balance_start):
                 print('Our bet wins')
-            elif (balance < prev_balance):
+            elif (balance_end < balance_start):
                 print('Our bet loses')
             else:
                 print('Money remained the same')
                 print(site.get_json())
 
             print('\nBetting is now open!')
-            print('Balance: ' + str(balance))
+            print('Balance: ' + str(balance_end))
 
             # Place the bet
             bet_player1(session, 500)
 
         elif (prev_status == 'open' and status == 'locked'):
             print('The match begins!')
+            balance_start = site.get_balance()
 
