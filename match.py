@@ -17,12 +17,14 @@ class Match:
         self.winner = None
         self.p1bets = None
         self.p2bets = None
+        self.mybet = None
 
-    def start_round(self, player1, player2, p1bets, p2bets):
-        self.player1 = player1
-        self.player2 = player2
-        self.p1bets = p1bets
-        self.p2bets = p2bets
+    def start_round(self, mybet, website):
+        self.player1 = website.get_player1_name()
+        self.player2 = website.get_player2_name()
+        self.p1bets = website.get_player1_wagers()
+        self.p2bets = website.get_player2_wagers()
+        self.mybet = mybet
 
     def end_round(self, duration, winner):
         self.duration = duration
