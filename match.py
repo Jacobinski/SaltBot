@@ -4,60 +4,48 @@ The match monitoring module for SaltBot
 from bs4 import BeautifulSoup
 import requests
 import time
-import json
 
-from login import saltbot_login
 from bet import bet_player1
-
-URL_JSON = "http://www.saltybet.com/state.json"
+from website import website
 
 class Match:
-    def __init__(self, session, request):
-        soup = BeautifulSoup(request.content, 'html.parser')
-        self.session = session
-        self.request = request
-        self.match_json = json.loads(session.get(URL_JSON).content)
-        self.betting_status = self.match_json['status']
-        self.balance = int(soup.find(id="balance").string.replace(',',''))
+    def __init__(self):
+        self.id = 0         # TODO: Use SQL to determine this w/ MAX()
+        self.player1 = None
+        self.player2 = None
+        self.duration = None
+        self.winner = None
+        self.p1bets = None
+        self.p2bets = None
 
-    def update(self):
-        # Refresh the request
-        self.request = self.session.get(self.request.url)
+    def start_round(self, player1, player2, p1bets, p2bets):
+        self.player1 = player1
+        self.player2 = player2
+        self.p1bets = p1bets
+        self.p2bets = p2bets
 
-        # Check to see if the match status changed
-        new_match = json.loads(self.session.get(URL_JSON).content)
-        if (self.match_json != new_match):
-            # Update match json
-            self.match_json = new_match
+    def end_round(self, duration, winner):
+        self.duration = duration
+        self.winner = winner
 
-            # Update betting status
-            self.betting_status = self.match_json['status']
-
-            # Update balance
-            soup = BeautifulSoup(self.request.content, 'html.parser')
-            self.balance = int(soup.find(id="balance").string.replace(',',''))
-
-    def get_betting_status(self):
-        return self.betting_status
-
-    def get_balance(self):
-        return self.balance
-
+    def save_round(self):
+        # TODO: Save to SQL
+        return
 
 def record_match(session, request):
     # Initialize a match
-    match = Match(session, request)
+    site = website(session, request)
 
     while(True):
         # Add a delay to avoid overloading the server
         time.sleep(10)
 
-        # Update match status
-        prev_status = match.get_betting_status()
-        prev_balance = match.get_balance()
-        match.update()
-        status = match.get_betting_status()
-        balance = match.get_balance()
+        # Update status
+        prev_status = site.get_betting_status()
+        prev_balance = site.get_balance()
+        site.update()
+        status = site.get_betting_status()
+        balance = site.get_balance()
 
         if (prev_status == 'locked' and status == 'open'):
             if (balance > prev_balance):
@@ -66,6 +54,7 @@ def record_match(session, request):
                 print('Our bet loses')
             else:
                 print('Money remained the same')
+                print(site.get_json())
 
             print('\nBetting is now open!')
             print('Balance: ' + str(balance))
