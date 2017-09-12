@@ -1,5 +1,5 @@
 '''
-The match monitoring module for SaltBot
+The website access module for SaltBot
 '''
 from bs4 import BeautifulSoup
 import requests
@@ -19,6 +19,37 @@ class website:
         soup = BeautifulSoup(request.content, 'html.parser')
         self.balance = int(soup.find(id="balance").string.replace(',',''))
 
+    #TODO: What does this field do?
+    def get_alert(self):
+        return self.match_json['alert']
+
+    def get_balance(self):
+        return self.balance
+
+    def get_betting_status(self):
+        return self.match_json['status']
+
+    def get_json(self):
+        return self.match_json
+
+    def get_player1_name(self):
+        return self.match_json['p1name']
+
+    def get_player1_wagers(self):
+        return self.match_json['p1total']
+
+    def get_player2_name(self):
+        return self.match_json['p2name']
+
+    def get_player2_wagers(self):
+        return self.match_json['p2total']
+
+    def get_remaining(self):
+        return self.match_json['remaining']
+
+    def get_player2_name(self):
+        return self.match_json['p2name']
+
     def update(self):
         # Refresh the request
         self.request = self.session.get(self.request.url)
@@ -30,12 +61,3 @@ class website:
             soup = BeautifulSoup(self.request.content, 'html.parser')
             self.match_json = new_match
             self.balance = int(soup.find(id="balance").string.replace(',',''))
-
-    def get_betting_status(self):
-        return self.match_json['status']
-
-    def get_balance(self):
-        return self.balance
-
-    def get_json(self):
-        return self.match_json
