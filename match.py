@@ -35,6 +35,25 @@ class Match:
         return
 
 def record_match(session, request):
+    """
+    Places bets on SaltyBet matches.
+
+    Runs the logic of SaltBot. Periodically scrapes and places bets on
+    the website.
+
+    Args:
+        session (session): A requests library session.
+        request (request): A requests library request.
+
+    Returns:
+        None
+
+    Todo:
+        * Logic should go into main.
+        * This function should record matches to a database.
+
+    """
+
     # Initialize a match
     site = website(session, request)
     balance_start = None

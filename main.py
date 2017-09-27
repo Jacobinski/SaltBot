@@ -5,6 +5,11 @@ from login import saltbot_login
 from match import record_match
 
 def main():
+    """
+    The main run loop for SaltBot
+
+    """
+
     # Login to SaltyBet
     session, request = saltbot_login()
 
