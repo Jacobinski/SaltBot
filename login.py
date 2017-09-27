@@ -26,15 +26,8 @@ def saltbot_login():
         request (request): A requests library request.
 
     """
-
-    # Default the return values to None
-    session = None
-    request = None
-
-    # Start a session so we can have persistant cookies
     session = requests.session()
 
-    # Obtain login specifics from .env if running locally
     if os.environ.get('HEROKU') is None:
         load_dotenv(find_dotenv())
 
@@ -49,7 +42,8 @@ def saltbot_login():
     request = session.post(URL_SIGNIN, data=login_data)
 
     # Check for successful login & redirect
-    if request.url != "https://www.saltybet.com/" and request.url != "http://www.saltybet.com/":
-        print("Error: Wrong URL: " + request.url)
+    if ( request.url != "https://www.saltybet.com/" and request.url !=
+            "http://www.saltybet.com/" ):
+        raise RuntimeError("Error: Wrong URL: " + request.url)
 
     return session, request
