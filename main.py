@@ -41,7 +41,9 @@ def main():
                 elif (balance_end < balance_start):
                     print('Our bet loses')
                 else:
-                    print('Money remained the same')
+                    print('Start $: ' + str(balance_start)
+                        + ' End $: ' + str(balance_end))
+                    print('Money remained the same?')
                     print(site.get_json())
 
                 print('\nBetting is now open!')
