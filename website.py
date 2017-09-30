@@ -36,19 +36,16 @@ class website:
         return self.match_json['p1name']
 
     def get_player1_wagers(self):
-        return self.match_json['p1total']
+        return str(self.match_json['p1total']).replace(',','')
 
     def get_player2_name(self):
         return self.match_json['p2name']
 
     def get_player2_wagers(self):
-        return self.match_json['p2total']
+        return str(self.match_json['p2total']).replace(',','')
 
     def get_remaining(self):
         return self.match_json['remaining']
-
-    def get_player2_name(self):
-        return self.match_json['p2name']
 
     def update(self):
         # Refresh the request
