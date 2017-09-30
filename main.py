@@ -41,7 +41,7 @@ def main():
 
     # Record the match
     site = website(session, request)
-    balance_start, balance_end = None, None
+    balance_start, balance_end = site.get_balance()
     status, prev_status = None, None
 
     while(True):
