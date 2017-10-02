@@ -102,11 +102,18 @@ def main():
                 print('\nBetting is now open!')
                 print('Balance: ' + str(balance_end))
 
+                if balance_end > 1000000:
+                    bet = 10000
+                elif balance_end > 100000:
+                    bet = 1000
+                else:
+                    bet = 500
+
                 # Place the bet, refresh the status to determine success
-                bet_player1(session, 500)
+                bet_player1(session, bet)
                 placed_bet = True
                 match['myplayer'] = site.get_player1_name()
-                match['mybet'] = 500
+                match['mybet'] = bet
 
             elif (prev_status == 'open' and status == 'locked'):
                 print('The match begins!')
