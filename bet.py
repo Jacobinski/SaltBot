@@ -24,12 +24,15 @@ def __bet(session, player, wager):
     """
 
     bet = {'selectedplayer': player, 'wager': wager}
-    session.post(URL_BET, data=bet)
+    r = session.post(URL_BET, data=bet)
 
-    if ('player1' == player):
-        print("Wager " + bet['wager'] + " on " + json.loads(session.get("http://www.saltybet.com/state.json").content)['p1name'])
-    elif('player2' == player):
-        print("Wager " + bet['wager'] + " on " + json.loads(session.get("http://www.saltybet.com/state.json").content)['p2name'])
+    if (r.status_code == 200):
+        if ('player1' == player):
+            print("Wager " + bet['wager'] + " on " + json.loads(session.get("http://www.saltybet.com/state.json").content)['p1name'])
+        elif('player2' == player):
+            print("Wager " + bet['wager'] + " on " + json.loads(session.get("http://www.saltybet.com/state.json").content)['p2name'])
+    else:
+        print("Bet not placed. Status code:" + str(r.status_code))
 
 def bet_player1(session, wager):
     """
