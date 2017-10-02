@@ -41,41 +41,68 @@ def main():
 
     # Record the match
     site = website(session, request)
-    balance_start, balance_end = site.get_balance()
-    status, prev_status = None, None
+    balance_start, balance_end = site.get_balance(), site.get_balance()
+    status, prev_status = "None", "None"
+    duration = 0
+    placed_bet = False
 
     while(True):
         try:
             # Add a delay to avoid overloading the server
             time.sleep(10)
+            duration += 10
 
             # Update status
             prev_status = status
             site.update()
             status = site.get_betting_status()
 
-            if (prev_status == 'locked' and status == 'open'):
-                balance_end = site.get_balance()
-                if (balance_end > balance_start):
-                    print('Our bet wins')
-                elif (balance_end < balance_start):
-                    print('Our bet loses')
-                else:
-                    print('Start $: ' + str(balance_start)
-                        + ' End $: ' + str(balance_end))
-                    print('Money remained the same?')
-                print(site.get_json())
+            # Create a match dictionary
+            match = {'player1':'','player2':'','duration':'', 'p1bet':'',
+                'p2bet':'', 'myplayer':'', 'mybet':'', 'winner':'', 'tier':''}
 
+            # Note: Sometimes prev_status == '2' for some reason.
+            if (prev_status != 'open' and status == 'open'):
+                # End of previous match.
+                # The placed_bet check is these to ensure that the match had begun and we fully populated the match dict before storing to PostgreSQL
+                if placed_bet:
+
+                    balance_end = site.get_balance()
+
+                    if (balance_end > balance_start):
+                        print('Our bet wins')
+                    elif (balance_end < balance_start):
+                        print('Our bet loses')
+                    else:
+                        print('Start $: ' + str(balance_start)
+                            + ' End $: ' + str(balance_end))
+                        print('Money remained the same?')
+
+                    match['duration'] = duration
+                    match['winner'] = '???'
+
+                # Start of new match
                 print('\nBetting is now open!')
                 print('Balance: ' + str(balance_end))
 
-                # Place the bet
+                # Place the bet, refresh the status to determine success
                 bet_player1(session, 500)
+                placed_bet = True
+                match['myplayer'] = site.get_player1_name()
+                match['mybet'] = 500
 
             elif (prev_status == 'open' and status == 'locked'):
                 print('The match begins!')
                 balance_start = site.get_balance()
+                duration = 0
 
+                match['player1'] = site.get_player1_name()
+                match['player2'] = site.get_player2_name()
+                match['p1bet'] = site.get_player1_wagers()
+                match['p2bet'] = site.get_player2_wagers()
+                match['tier'] = '?'
+
+                # Save the match
                 cur.execute(""" INSERT INTO Match (player1, player2,
                     duration_s, p1_bets, p2_bets, my_player, my_bet, winner,
                     tier) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
@@ -84,6 +111,11 @@ def main():
                     site.get_player1_name(), 500, "TODO: Fix unknown winner",
                     "?"))
                 conn.commit()
+
+            else:
+                print("prev: " + prev_status + ", cur: " + status)
+                if(status != 'open' and status != 'locked'):
+                    print(site.get_json())
 
         except Exception, err:
             cur.close()
