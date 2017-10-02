@@ -46,6 +46,11 @@ def main():
     duration = 0
     placed_bet = False
 
+
+    # Create a match dictionary
+    match = {'player1':'','player2':'','duration':'', 'p1bet':'',
+    'p2bet':'', 'myplayer':'', 'mybet':'', 'winner':''}
+
     while(True):
         try:
             # Add a delay to avoid overloading the server
@@ -57,11 +62,8 @@ def main():
             site.update()
             status = site.get_betting_status()
 
-            # Create a match dictionary
-            match = {'player1':'','player2':'','duration':'', 'p1bet':'',
-                'p2bet':'', 'myplayer':'', 'mybet':'', 'winner':'', 'tier':''}
-
-            # Note: Sometimes prev_status == '2' for some reason.
+            # Note: The status can be open, locked, 1, 2. The last two
+            # statuses denote player1, player2 victory
             if (prev_status != 'open' and status == 'open'):
                 # End of previous match.
                 # The placed_bet check is these to ensure that the match had begun and we fully populated the match dict before storing to PostgreSQL
@@ -71,15 +73,30 @@ def main():
 
                     if (balance_end > balance_start):
                         print('Our bet wins')
+                        match['winner'] = match['myplayer']
                     elif (balance_end < balance_start):
                         print('Our bet loses')
+                        if match['myplayer'] == match['player1']:
+                            match['winner'] = match['player2']
+                        else:
+                            match['winner'] = match['player1']
                     else:
                         print('Start $: ' + str(balance_start)
                             + ' End $: ' + str(balance_end))
                         print('Money remained the same?')
+                        match['winner'] = '???'
 
                     match['duration'] = duration
-                    match['winner'] = '???'
+
+                    # Save the match
+                    cur.execute(""" INSERT INTO Match (player1, player2,
+                        duration_s, p1_bets, p2_bets, my_player, my_bet,
+                        winner) VALUES (%s, %s, %s, %s, %s, %s,
+                        %s, %s)""", (match['player1'], match['player2'],
+                        match['duration'], match['p1bet'],
+                        match['p2bet'], match['myplayer'],
+                        match['mybet'], match['winner']))
+                    conn.commit()
 
                 # Start of new match
                 print('\nBetting is now open!')
@@ -100,22 +117,6 @@ def main():
                 match['player2'] = site.get_player2_name()
                 match['p1bet'] = site.get_player1_wagers()
                 match['p2bet'] = site.get_player2_wagers()
-                match['tier'] = '?'
-
-                # Save the match
-                cur.execute(""" INSERT INTO Match (player1, player2,
-                    duration_s, p1_bets, p2_bets, my_player, my_bet, winner,
-                    tier) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-                    (site.get_player1_name(), site.get_player2_name(), 0,
-                    site.get_player1_wagers(),site.get_player2_wagers(),
-                    site.get_player1_name(), 500, "TODO: Fix unknown winner",
-                    "?"))
-                conn.commit()
-
-            else:
-                print("prev: " + prev_status + ", cur: " + status)
-                if(status != 'open' and status != 'locked'):
-                    print(site.get_json())
 
         except Exception, err:
             cur.close()
