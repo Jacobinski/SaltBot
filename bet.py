@@ -3,10 +3,15 @@ The betting module for SaltBot
 '''
 import json
 import random
+from enum import Enum
 
 URL_BET = 'http://www.saltybet.com/ajax_place_bet.php'
 
-def __bet(session, player, wager):
+class player(Enum):
+    P1 = 'player1'
+    P2 = 'player2'
+
+def bet(session, player, wager):
     """
     Place a bet on a player
 
@@ -15,7 +20,7 @@ def __bet(session, player, wager):
     Args:
         session (session): A requests library session for the SaltyBet
             website.
-        player (str): Either "player1" or "player2".
+        player (player): Either enum P1 or P2
         wager (int): The amount of money to wager.
 
     Returns:
@@ -26,73 +31,5 @@ def __bet(session, player, wager):
     bet = {'selectedplayer': player, 'wager': wager}
     r = session.post(URL_BET, data=bet)
 
-    if (r.status_code == 200):
-        if ('player1' == player):
-            print("Wager " + bet['wager'] + " on " + json.loads(session.get("http://www.saltybet.com/state.json").content)['p1name'])
-        elif('player2' == player):
-            print("Wager " + bet['wager'] + " on " + json.loads(session.get("http://www.saltybet.com/state.json").content)['p2name'])
-    else:
-        print("Bet not placed. Status code:" + str(r.status_code))
-
-def bet_player1(session, wager):
-    """
-    Place a bet on a player1
-
-    Given a wager, this function formats and sends SaltyBet a request for
-    a bet.
-
-    Args:
-        session (session): A requests library session for the SaltyBet
-            website.
-        wager (int): The amount of money to wager.
-
-    Returns:
-        None
-
-    """
-
-    __bet(session, 'player1', str(wager))
-
-def bet_player2(session, wager):
-    """
-    Place a bet on a player2
-
-    Given a wager, this function formats and sends SaltyBet a request for
-    a bet.
-
-    Args:
-        session (session): A requests library session for the SaltyBet
-            website.
-        wager (int): The amount of money to wager.
-
-    Returns:
-        None
-
-    """
-
-    __bet(session, 'player2', str(wager))
-
-def bet_random(session, wager):
-    """
-    Place a bet on a random player
-
-    Given a wager, this function formats and sends SaltyBet a request for
-    a bet.
-
-    Args:
-        session (session): A requests library session for the SaltyBet
-            website.
-        wager (int): The amount of money to wager.
-
-    Returns:
-        None
-
-    """
-
-    player = random.randint(1,2)
-    if (1 == player):
-        __bet(session, 'player1', str(wager))
-    elif (2 == player):
-        __bet(session, 'player2', str(wager))
-    else:
-        print("Bet random failed")
+    assert r.status_code == 200, "Bet failed to be place. Code: %i" \
+        % r.status_code

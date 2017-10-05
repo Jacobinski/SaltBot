@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 
 from login import saltbot_login
 from match import record_match
-from bet import bet_player1
+from bet import bet, player
 from website import website
 
 # New
@@ -17,15 +17,13 @@ import psycopg2
 import urlparse
 
 urlparse.uses_netloc.append("postgres")
-url = urlparse.urlparse(os.environ["DATABASE_URL"])
-
+url = urlparse.urlparse("postgres://cscfqlljqydaxl:3646b54bbe6283d48e30e2e820d68f64c8f4380157c208a651a86f7c31b5499b@ec2-50-17-217-166.compute-1.amazonaws.com:5432/d8msebhgr79j80")
 
 def main():
     """
     The main run loop for SaltBot
 
     """
-
     # Login to SaltyBet
     session, request = saltbot_login()
 
@@ -103,17 +101,18 @@ def main():
                 print('Balance: ' + str(balance_end))
 
                 if balance_end > 1000000:
-                    bet = 10000
+                    wager = 10000
                 elif balance_end > 100000:
-                    bet = 1000
+                    wager = 1000
                 else:
-                    bet = 500
+                    wager = 500
 
                 # Place the bet, refresh the status to determine success
-                bet_player1(session, bet)
+                bet(session, player.P1, wager)
                 placed_bet = True
+                print("Bet " + str(wager) + " on " + player.P1)
                 match['myplayer'] = site.get_player1_name()
-                match['mybet'] = bet
+                match['mybet'] = wager
 
             elif (prev_status == 'open' and status == 'locked'):
                 print('The match begins!')
@@ -128,7 +127,7 @@ def main():
         except Exception, err:
             cur.close()
             conn.close()
-            sys.stderr.write('ERROR: %sn' % str(err))
+            sys.stderr.write('ERROR: %s \n' % str(err))
 
 if __name__ == '__main__':
     main()
