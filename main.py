@@ -1,20 +1,20 @@
 '''
 A python script for SaltBot
 '''
+import os
 import sys
-import requests
 import time
+
+import requests
+from urllib import parse
 from bs4 import BeautifulSoup
+import psycopg2
 
 from login import saltbot_login
 from match import record_match
-from bet import bet, player
+from bet import bet, player, determine_wager
 from website import website
 
-# New
-import os
-from urllib import parse
-import psycopg2
 
 parse.uses_netloc.append("postgres")
 url = parse.urlparse(os.environ["SALTBOT_DATABASE_URL"])
@@ -43,7 +43,6 @@ def main():
     status, prev_status = "None", "None"
     duration = 0
     placed_bet = False
-
 
     # Create a match dictionary
     match = {'player1':'','player2':'','duration':'', 'p1bet':'',
@@ -100,12 +99,7 @@ def main():
                 print('\nBetting is now open!')
                 print('Balance: ' + str(balance_end))
 
-                if balance_end > 1000000:
-                    wager = 10000
-                elif balance_end > 100000:
-                    wager = 1000
-                else:
-                    wager = 500
+                wager = determine_wager(balance_end)
 
                 # Place the bet, refresh the status to determine success
                 bet(session, player.P1, wager)

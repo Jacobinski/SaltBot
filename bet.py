@@ -33,3 +33,32 @@ def bet(session, player, wager):
 
     assert r.status_code == 200, "Bet failed to be place. Code: %i" \
         % r.status_code
+
+def determine_wager(total_money):
+    """
+    Determine a wager when given total money
+
+    When placing bets, one should be careful to bet low amounts to not
+    tip the betting pool too much in one direction. This being said, we
+    should bet at a value high enough to make it worth our time.
+
+    Args:
+        total_money (int): The total money in our bank
+
+    Returns:
+        wager (int): The suggested wager to place
+
+    """
+    """
+    First pass algorithm: Linear model
+        Bet: $500,  Total: $100k
+        Bet: $1000, Total: $200k
+
+        Model:    y = m * x      + b
+               1000 = m * 200000 + b
+                500 = m * 100000 + b
+                -> b = 0
+                -> m = 0.005
+    """
+
+    return 0.005 * total_money
