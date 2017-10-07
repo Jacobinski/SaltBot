@@ -3,7 +3,6 @@ The user login module for SaltBot
 '''
 import requests
 import os
-from dotenv import load_dotenv, find_dotenv
 
 URL_SIGNIN = 'https://www.saltybet.com/authenticate?signin=1'
 
@@ -28,13 +27,10 @@ def saltbot_login():
     """
     session = requests.session()
 
-    if os.environ.get('HEROKU') is None:
-        load_dotenv(find_dotenv())
-
     # This is the form data that the page sends when logging in
     login_data = {
-        'email': os.environ.get('EMAIL'),
-        'pword': os.environ.get('PASSWORD'),
+        'email': os.environ.get('SALTBOT_EMAIL'),
+        'pword': os.environ.get('SALTBOT_PASSWORD'),
         'authenticate': 'signin'
     }
 

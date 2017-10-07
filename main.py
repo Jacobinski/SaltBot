@@ -13,11 +13,11 @@ from website import website
 
 # New
 import os
+from urllib import parse
 import psycopg2
-import urlparse
 
-urlparse.uses_netloc.append("postgres")
-url = urlparse.urlparse("postgres://cscfqlljqydaxl:3646b54bbe6283d48e30e2e820d68f64c8f4380157c208a651a86f7c31b5499b@ec2-50-17-217-166.compute-1.amazonaws.com:5432/d8msebhgr79j80")
+parse.uses_netloc.append("postgres")
+url = parse.urlparse(os.environ["SALTBOT_DATABASE_URL"])
 
 def main():
     """
@@ -124,7 +124,7 @@ def main():
                 match['p1bet'] = site.get_player1_wagers()
                 match['p2bet'] = site.get_player2_wagers()
 
-        except Exception, err:
+        except Exception as err:
             cur.close()
             conn.close()
             sys.stderr.write('ERROR: %s \n' % str(err))
