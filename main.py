@@ -101,14 +101,37 @@ def main():
                     match['duration'] = duration
 
                     # Save the match
-                    cur.execute(""" INSERT INTO Match (player1, player2,
+                    cur.execute("""INSERT INTO Match (player1, player2,
                         duration_s, p1_bets, p2_bets, my_player, my_bet,
                         winner) VALUES (%s, %s, %s, %s, %s, %s,
-                        %s, %s)""", (match['player1'], match['player2'],
+                        %s, %s)""",
+                        (match['player1'], match['player2'],
                         match['duration'], match['p1bet'],
                         match['p2bet'], match['myplayer'],
                         match['mybet'], match['winner']))
                     conn.commit()
+
+                    # Add players to table
+                    for p in ['player1','player2']:
+                        # Add player if not already in table
+                        cur.execute("""SELECT True FROM Player WHERE name =
+                            (%s)""",
+                            (match['player1'],))
+                        if cur.fetchone() == None:
+                            matches = '0'
+                            wins = '0'
+                            losses = '0'
+                            ties = '0'
+                            win_percentage = '0'
+                            avg_win_time = '0'
+                            avg_lose_time = '0'
+                            cur.execute("""INSERT INTO Player (name, matches,
+                                wins, losses, ties, win_percentage,
+                                avg_win_time, avg_lose_time) VALUES (%s, %s,
+                                %s, %s, %s, %s, %s, %s)""",
+                                (match['player1'], matches, wins, losses, ties,
+                                win_percentage, avg_win_time, avg_lose_time))
+                            conn.commit()
 
                 # Start of new match
                 print('\nBetting is now open!')
