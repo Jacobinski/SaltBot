@@ -4,6 +4,7 @@ A python script for SaltBot
 import os
 import sys
 import time
+from enum import Enum
 
 import requests
 from urllib import parse
@@ -18,6 +19,12 @@ from website import website
 
 parse.uses_netloc.append("postgres")
 url = parse.urlparse(os.environ["SALTBOT_DATABASE_URL"])
+
+class match_state(Enum):
+    p1_win = 0
+    p2_win = 1
+    tie = 3
+    invalid = 4
 
 def main():
     """
@@ -43,6 +50,7 @@ def main():
     status, prev_status = "None", "None"
     duration = 0
     placed_bet = False
+    state = match_state.invalid
 
     # Create a match dictionary
     match = {'player1':'','player2':'','duration':'', 'p1bet':'',
@@ -71,17 +79,24 @@ def main():
                     if (balance_end > balance_start):
                         print('Our bet wins')
                         match['winner'] = match['myplayer']
+                        if match['player1'] == match['myplayer']:
+                            state = match_state.p1_win
+                        else:
+                            state = match_state.p2_win
                     elif (balance_end < balance_start):
                         print('Our bet loses')
                         if match['myplayer'] == match['player1']:
                             match['winner'] = match['player2']
+                            state = match_state.p2_win
                         else:
                             match['winner'] = match['player1']
+                            state = match_state.p1_win
                     else:
                         print('Start $: ' + str(balance_start)
                             + ' End $: ' + str(balance_end))
                         print('Money remained the same?')
                         match['winner'] = '???'
+                        state = match_state.tie
 
                     match['duration'] = duration
 
