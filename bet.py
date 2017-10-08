@@ -28,7 +28,7 @@ def bet(session, player, wager):
 
     """
 
-    bet = {'selectedplayer': player, 'wager': wager}
+    bet = {'selectedplayer': player.value, 'wager': wager}
     r = session.post(URL_BET, data=bet)
 
     assert r.status_code == 200, "Bet failed to be place. Code: %i" \
@@ -61,4 +61,4 @@ def determine_wager(total_money):
                 -> m = 0.005
     """
 
-    return 0.005 * total_money
+    return round(0.005 * total_money)

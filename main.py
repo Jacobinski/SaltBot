@@ -104,7 +104,7 @@ def main():
                 # Place the bet, refresh the status to determine success
                 bet(session, player.P1, wager)
                 placed_bet = True
-                print("Bet " + str(wager) + " on " + player.P1)
+                print("Bet " + str(wager) + " on " + player.P1.value)
                 match['myplayer'] = site.get_player1_name()
                 match['mybet'] = wager
 
