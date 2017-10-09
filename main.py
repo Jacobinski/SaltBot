@@ -136,30 +136,30 @@ def main():
                     # Update player tables
                     if match_state.p1_win == state:
                         cur.execute("""UPDATE Player SET matches = matches + 1,
-                            win_percentage = (wins + 1) / NULLIF(wins +
-                            losses, 0), wins = wins + 1, avg_win_time = (wins *
-                            avg_win_time + %s ) / (wins + 1) WHERE name =
-                            %s""",
+                            win_percentage = (1.0 * wins + 1) / NULLIF(wins +
+                            losses, 0), wins = wins + 1, avg_win_time = (1.0 *
+                            wins * avg_win_time + %s ) / (wins + 1) WHERE name
+                            = %s""",
                             (match['duration'], match['player1']))
                         cur.execute("""UPDATE Player SET matches = matches + 1,
-                            win_percentage = wins / (wins + losses + 1),
-                            losses = losses + 1, avg_lose_time = (losses *
-                            avg_lose_time + %s ) / (losses + 1) WHERE name =
-                             %s""",
+                            win_percentage = (1.0 * wins) / (wins + losses + 1
+                            ), losses = losses + 1, avg_lose_time = (1.0 *
+                            losses * avg_lose_time + %s ) / (losses + 1) WHERE
+                            name = %s""",
                             (match['duration'], match['player2']))
                         conn.commit()
                     elif match_state.p2_win == state:
                         cur.execute("""UPDATE Player SET matches = matches + 1,
-                            win_percentage = (wins + 1) / NULLIF(wins +
-                            losses, 0), wins = wins + 1, avg_win_time = (wins *
-                            avg_win_time + %s ) / (wins + 1) WHERE name =
-                            %s""",
+                            win_percentage = (1.0 * wins + 1) / NULLIF(wins +
+                            losses, 0), wins = wins + 1, avg_win_time = (1.0 *
+                            wins * avg_win_time + %s ) / (wins + 1) WHERE name
+                            = %s""",
                             (match['duration'], match['player2']))
                         cur.execute("""UPDATE Player SET matches = matches + 1,
-                            win_percentage = wins / (wins + losses + 1),
-                            losses = losses + 1, avg_lose_time = (losses *
-                            avg_lose_time + %s ) / (losses + 1) WHERE name =
-                             %s""",
+                            win_percentage = (1.0 * wins) / (wins + losses + 1
+                            ), losses = losses + 1, avg_lose_time = (1.0 *
+                            losses * avg_lose_time + %s ) / (losses + 1) WHERE
+                            name = %s""",
                             (match['duration'], match['player1']))
                         conn.commit()
                     elif match_state.tie == state:
