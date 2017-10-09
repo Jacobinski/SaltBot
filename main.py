@@ -111,27 +111,62 @@ def main():
                         match['mybet'], match['winner']))
                     conn.commit()
 
-                    # Add players to table
+                    # Add players to table if not already there
                     for p in ['player1','player2']:
                         # Add player if not already in table
                         cur.execute("""SELECT True FROM Player WHERE name =
                             (%s)""",
-                            (match['player1'],))
+                            (match[p],))
                         if cur.fetchone() == None:
-                            matches = '0'
-                            wins = '0'
-                            losses = '0'
-                            ties = '0'
-                            win_percentage = '0'
-                            avg_win_time = '0'
-                            avg_lose_time = '0'
+                            matches = 0
+                            wins = 0
+                            losses = 0
+                            ties = 0
+                            win_percentage = 0
+                            avg_win_time = 0
+                            avg_lose_time = 0
                             cur.execute("""INSERT INTO Player (name, matches,
                                 wins, losses, ties, win_percentage,
                                 avg_win_time, avg_lose_time) VALUES (%s, %s,
                                 %s, %s, %s, %s, %s, %s)""",
-                                (match['player1'], matches, wins, losses, ties,
+                                (match[p], matches, wins, losses, ties,
                                 win_percentage, avg_win_time, avg_lose_time))
                             conn.commit()
+
+                    # Update player tables
+                    if match_state.p1_win == state:
+                        cur.execute("""UPDATE Player SET matches = matches + 1,
+                            win_percentage = (wins + 1) / NULLIF(losses, 0),
+                            wins = wins + 1, avg_win_time = (wins *
+                            avg_win_time + %s ) / (wins + 1) WHERE name =
+                            %s""",
+                            (match['duration'], match['player1']))
+                        cur.execute("""UPDATE Player SET matches = matches + 1,
+                            win_percentage = wins / (losses + 1), losses =
+                            losses + 1, avg_lose_time = (losses *
+                            avg_lose_time + %s ) / (losses + 1) WHERE name =
+                             %s""",
+                            (match['duration'], match['player2']))
+                        conn.commit()
+                    elif match_state.p2_win == state:
+                        cur.execute("""UPDATE Player SET matches = matches + 1,
+                            win_percentage = (wins + 1) / NULLIF(losses, 0),
+                            wins = wins + 1, avg_win_time = (wins *
+                            avg_win_time + %s ) / (wins + 1) WHERE name =
+                            %s""",
+                            (match['duration'], match['player2']))
+                        cur.execute("""UPDATE Player SET matches = matches + 1,
+                            win_percentage = wins / (losses + 1), losses =
+                            losses + 1, avg_lose_time = (losses *
+                            avg_lose_time + %s ) / (losses + 1) WHERE name =
+                             %s""",
+                            (match['duration'], match['player1']))
+                        conn.commit()
+                    elif match_state.tie == state:
+                        cur.execute("""UPDATE Player SET matches = matches + 1,
+                            ties = ties + 1 WHERE name = %s OR name = %s""",
+                            (match['player1'], match['player2']))
+                        conn.commit()
 
                 # Start of new match
                 print('\nBetting is now open!')
