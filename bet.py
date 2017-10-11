@@ -61,4 +61,5 @@ def determine_wager(total_money):
                 -> m = 0.005
     """
 
-    return round(0.005 * total_money)
+    return 500
+    #return round(0.005 * total_money)
