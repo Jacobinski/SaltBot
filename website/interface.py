@@ -1,5 +1,5 @@
 '''
-The website access module for SaltBot
+The interface module for SaltBot
 '''
 from bs4 import BeautifulSoup
 import requests
@@ -8,7 +8,7 @@ import json
 
 URL_JSON = "http://www.saltybet.com/state.json"
 
-class website:
+class interface:
     def __init__(self, session, request):
         # Match session
         self.session = session

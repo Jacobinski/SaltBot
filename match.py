@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 import time
 
-from website import website
+import website
 
 class Match:
     def __init__(self):

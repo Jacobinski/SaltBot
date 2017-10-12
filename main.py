@@ -4,7 +4,6 @@ A python script for SaltBot
 import os
 import sys
 import time
-from enum import Enum
 
 import requests
 from urllib import parse
@@ -14,23 +13,18 @@ import psycopg2
 from login import saltbot_login
 from match import record_match
 from bet import bet, player, determine_wager
-from website import website
-
+from state_machine import match_state
+import website
 
 parse.uses_netloc.append("postgres")
 url = parse.urlparse(os.environ["SALTBOT_DATABASE_URL"])
-
-class match_state(Enum):
-    p1_win = 0
-    p2_win = 1
-    tie = 3
-    invalid = 4
 
 def main():
     """
     The main run loop for SaltBot
 
     """
+
     # Login to SaltyBet
     session, request = saltbot_login()
 
@@ -45,7 +39,7 @@ def main():
     cur = conn.cursor()
 
     # Record the match
-    site = website(session, request)
+    site = website.interface(session, request)
     balance_start, balance_end = site.get_balance(), site.get_balance()
     status, prev_status = "None", "None"
     duration = 0
