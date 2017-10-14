@@ -6,7 +6,7 @@ import os
 
 URL_SIGNIN = 'https://www.saltybet.com/authenticate?signin=1'
 
-def saltbot_login():
+def login():
     """
     Authenticate SaltBot on the SaltyBet website.
 

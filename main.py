@@ -10,12 +10,12 @@ from urllib import parse
 from bs4 import BeautifulSoup
 import psycopg2
 
-from login import saltbot_login
 from match import record_match
 from bet import bet, player, determine_wager
 from state_machine import match_state
 import website
 import database
+import authenticate
 
 def main():
     """
@@ -24,7 +24,7 @@ def main():
     """
 
     # Login to SaltyBet
-    session, request = saltbot_login()
+    session, request = authenticate.login()
 
     # Connect to Database
     conn, cur = database.connect()
@@ -128,7 +128,7 @@ def main():
                         database.record_win(match['player2'], match['duration'], conn, cur)
                         database.record_loss(match['player1'], match['duration'], conn, cur)
                     elif match_state.tie == state:
-                        database.record_ties(match['player1'], match['player2'], conn, cur)
+                        database.record_tie(match['player1'], match['player2'], conn, cur)
 
                 # Start of new match
                 print('\nBetting is now open!')
