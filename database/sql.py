@@ -2,7 +2,7 @@ import psycopg2
 
 def record_win(name, duration, conn, cur):
     cur.execute(
-        "update player"
+        "update player "
         "set matches = matches + 1,"
         "    win_percentage = (1.0 * wins + 1) / (wins + losses + 1),"
         "    wins = wins + 1,"
@@ -13,7 +13,7 @@ def record_win(name, duration, conn, cur):
 
 def record_loss(name, duration, conn, cur):
     cur.execute(
-        "update player"
+        "update player "
         "set matches = matches + 1,"
         "    win_percentage = (1.0 * wins) / (wins + losses + 1),"
         "    losses = losses + 1,"
@@ -22,9 +22,9 @@ def record_loss(name, duration, conn, cur):
         (duration, name))
     conn.commit()
 
-def record_tie(name1, name2, conn, cur)
+def record_tie(name1, name2, conn, cur):
     cur.execute(
-        "update player"
+        "update player "
         "set matches = matches + 1,"
         "    ties = ties + 1 "
         "where name = %s or name = %s",

@@ -1,17 +1,18 @@
 import os
+
 import psycopg2
-import urlparse
+from urllib import parse
 
 def connect():
-    urlparse.uses_netloc.append("postgres")
-    URL = urlparse.urlparse(os.environ["DATABASE_URL"])
+    parse.uses_netloc.append("postgres")
+    url = parse.urlparse(os.environ["SALTBOT_DATABASE_URL"])
 
     conn = psycopg2.connect(
-        database=URL.path[1:],
-        user=URL.username,
-        password=URL.password,
-        host=URL.hostname,
-        port=URL.port
+        database=url.path[1:],
+        user=url.username,
+        password=url.password,
+        host=url.hostname,
+        port=url.port
     )
     cur = conn.cursor()
 

@@ -15,9 +15,7 @@ from match import record_match
 from bet import bet, player, determine_wager
 from state_machine import match_state
 import website
-
-parse.uses_netloc.append("postgres")
-url = parse.urlparse(os.environ["SALTBOT_DATABASE_URL"])
+import database
 
 def main():
     """
@@ -29,17 +27,12 @@ def main():
     session, request = saltbot_login()
 
     # Connect to Database
-    conn = psycopg2.connect(
-        database=url.path[1:],
-        user=url.username,
-        password=url.password,
-        host=url.hostname,
-        port=url.port
-    )
-    cur = conn.cursor()
+    conn, cur = database.connect()
 
-    # Record the match
+    # Setup website interface
     site = website.interface(session, request)
+
+    # Create global variables
     balance_start, balance_end = site.get_balance(), site.get_balance()
     status, prev_status = "None", "None"
     duration = 0
@@ -129,38 +122,13 @@ def main():
 
                     # Update player tables
                     if match_state.p1_win == state:
-                        cur.execute("""UPDATE Player SET matches = matches + 1,
-                            win_percentage = (1.0 * wins + 1) / (wins +
-                            losses + 1), wins = wins + 1, avg_win_time = (1.0 *
-                            wins * avg_win_time + %s ) / (wins + 1) WHERE name
-                            = %s""",
-                            (match['duration'], match['player1']))
-                        cur.execute("""UPDATE Player SET matches = matches + 1,
-                            win_percentage = (1.0 * wins) / (wins + losses + 1
-                            ), losses = losses + 1, avg_lose_time = (1.0 *
-                            losses * avg_lose_time + %s ) / (losses + 1) WHERE
-                            name = %s""",
-                            (match['duration'], match['player2']))
-                        conn.commit()
+                        database.record_win(match['player1'], match['duration'], conn, cur)
+                        database.record_loss(match['player2'], match['duration'], conn, cur)
                     elif match_state.p2_win == state:
-                        cur.execute("""UPDATE Player SET matches = matches + 1,
-                            win_percentage = (1.0 * wins + 1) / (wins +
-                            losses + 1), wins = wins + 1, avg_win_time = (1.0 *
-                            wins * avg_win_time + %s ) / (wins + 1) WHERE name
-                            = %s""",
-                            (match['duration'], match['player2']))
-                        cur.execute("""UPDATE Player SET matches = matches + 1,
-                            win_percentage = (1.0 * wins) / (wins + losses + 1
-                            ), losses = losses + 1, avg_lose_time = (1.0 *
-                            losses * avg_lose_time + %s ) / (losses + 1) WHERE
-                            name = %s""",
-                            (match['duration'], match['player1']))
-                        conn.commit()
+                        database.record_win(match['player2'], match['duration'], conn, cur)
+                        database.record_loss(match['player1'], match['duration'], conn, cur)
                     elif match_state.tie == state:
-                        cur.execute("""UPDATE Player SET matches = matches + 1,
-                            ties = ties + 1 WHERE name = %s OR name = %s""",
-                            (match['player1'], match['player2']))
-                        conn.commit()
+                        database.record_ties(match['player1'], match['player2'], conn, cur)
 
                 # Start of new match
                 print('\nBetting is now open!')
