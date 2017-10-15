@@ -5,24 +5,28 @@ An automatic betting program for www.saltybet.com
 
 ## Usage
 ### Authentication
-Create a file named **.env** in the same directory as login.py. Add your SaltyBet account's username and password to it in the following manner.
+The user's email and password must be set as environment variables in order for Saltbot to use the account. This can be done from command line.
+```bash
+$ export SALTBOT_EMAIL = "example@example.com"
+$ export SALTBOT_PASSWORD = "examplePassword123"
 ```
-# Example Login Information for SaltBot
-EMAIL = "example@example.com"
-PASSWORD = "examplePassword123"
+### Database Setup
+Saltbot currently only supports Heroku Postgresql databases. These can be obtained through **data.heroku.com**, and the provided DATABASE_URL from Heroku serves as the environment variable.
+```bash
+$ export SALTBOT_DATABASE_URL = "postgres://USER:PASSWORD@HOST:PORT/DATABASE
 ```
 ### Python Setup
-This bot is programmed in Python 2.7, so it must be installed on your machine. Check to make sure it is installed.
+This bot is programmed in Python 3.6, so it must be installed on your machine. Check to make sure it is installed.
 ```bash
 $ python --version
-Python 2.7.13
+Python 3.6.0
 ```
-Use pip to install the requirements.txt
+Use pip3 to install the requirements.txt
 ```bash
-$ pip install -r requirements.txt
+$ pip3 install -r requirements.txt
 ```
 ### Running the Bot
 The current state of the bot is to place $500 on Red each round. To run the command, invoke the following command from the console.
 ```bash
-$ python main.py
+$ python3 main.py
 ```
