@@ -115,23 +115,27 @@ def main():
                 bet(session, player.P1, wager)
                 placed_bet = True
                 print("Bet " + str(wager) + " on " + match['player1'])
+
+                match['player1'] = site.get_player1_name()
+                match['player2'] = site.get_player2_name()
                 match['myplayer'] = site.get_player1_name()
                 match['mybet'] = wager
+                #print(database.get_player(match['player1'], cur))
+                #print(database.get_player(match['player2'], cur))
 
             elif (prev_status == 'open' and status == 'locked'):
                 print('The match begins!')
                 balance_start = site.get_balance()
                 duration = 0
 
-                match['player1'] = site.get_player1_name()
-                match['player2'] = site.get_player2_name()
                 match['p1bet'] = site.get_player1_wagers()
                 match['p2bet'] = site.get_player2_wagers()
 
         except Exception as err:
             cur.close()
             conn.close()
-            sys.stderr.write('ERROR: %s \n' % str(err))
+            sys.stderr.write('ERROR: {0} on line {1}\n'.format(
+                str(err), sys.exc_info()[-1].tb_lineno))
 
 if __name__ == '__main__':
     main()

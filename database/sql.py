@@ -47,7 +47,7 @@ def has_player(name, cur):
     cur.execute(
         "select True "
         "from player "
-        "where name = (%s)"
+        "where name = (%s)",
         (name,))
     if cur.fetchone() == None:
         return False
@@ -64,3 +64,11 @@ def add_player(name, conn, cur):
         "values (%s, %s, %s, %s, %s, %s, %s, %s)",
         (name, 0, 0, 0, 0, 0, 0, 0))
     conn.commit()
+
+def get_player(name, cur):
+    cur.execute(
+        "select * "
+        "from player "
+        "where name = (%s)",
+        (name,))
+    return cur.fetchone()  # TODO: Maybe we want to fetchall() for the user?
