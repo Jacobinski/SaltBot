@@ -66,9 +66,13 @@ def add_player(name, conn, cur):
     conn.commit()
 
 def get_player(name, cur):
+    # TODO: Maybe we want to fetchall() for the user?
     cur.execute(
         "select * "
         "from player "
         "where name = (%s)",
         (name,))
-    return cur.fetchone()  # TODO: Maybe we want to fetchall() for the user?
+    ret = cur.fetchone()
+    if ret == None:
+        ret = ""
+    return ret
