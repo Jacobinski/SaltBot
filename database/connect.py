@@ -17,3 +17,6 @@ def connect():
     cur = conn.cursor()
 
     return conn, cur
+
+def connect_test_db():
+    pass

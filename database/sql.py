@@ -30,3 +30,37 @@ def record_tie(name1, name2, conn, cur):
         "where name = %s or name = %s",
         (name1, name2))
     conn.commit()
+
+def save_match(match, conn, cur):
+    cur.execute(
+        "insert into match "
+        "    ( "
+        "    player1, player2, duration_s, p1_bets, "
+        "    p2_bets, my_player, my_bet, winner "
+        "    ) "
+        "values (%s, %s, %s, %s, %s, %s, %s, %s)",
+        (match['player1'], match['player2'], match['duration'], match['p1bet'],
+        match['p2bet'], match['myplayer'], match['mybet'], match['winner']))
+    conn.commit()
+
+def has_player(name, cur):
+    cur.execute(
+        "select True "
+        "from player "
+        "where name = (%s)"
+        (name,))
+    if cur.fetchone() == None:
+        return False
+    else:
+        return True
+
+def add_player(name, conn, cur):
+    cur.execute(
+        "insert into player "
+        "    ( "
+        "    name, matches, wins, losses, ties, "
+        "    win_percentage, avg_win_time, avg_lose_time "
+        "    ) "
+        "values (%s, %s, %s, %s, %s, %s, %s, %s)",
+        (name, 0, 0, 0, 0, 0, 0, 0))
+    conn.commit()
