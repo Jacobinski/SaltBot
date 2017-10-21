@@ -1,6 +1,21 @@
 import psycopg2
 
 def record_win(name, duration, conn, cur):
+    """
+    Record a player win in the database
+
+    Update the player SQL object to reflect that they just won.
+
+    Args:
+        name (str): The name of the player
+        duration (int): The duration of the match, in seconds
+        conn: The SQL connection object
+        cur: The SQL cursor
+
+    Returns:
+        None
+
+    """
     cur.execute(
         "update player "
         "set matches = matches + 1,"
@@ -12,6 +27,21 @@ def record_win(name, duration, conn, cur):
     conn.commit()
 
 def record_loss(name, duration, conn, cur):
+    """
+    Record a player loss in the database
+
+    Update the player SQL object to reflect that they just lost.
+
+    Args:
+        name (str): The name of the player
+        duration (int): The duration of the match, in seconds
+        conn: The SQL connection object
+        cur: The SQL cursor
+
+    Returns:
+        None
+
+    """
     cur.execute(
         "update player "
         "set matches = matches + 1,"
@@ -23,6 +53,21 @@ def record_loss(name, duration, conn, cur):
     conn.commit()
 
 def record_tie(name1, name2, conn, cur):
+    """
+    Record a set of ties in the database
+
+    Update both player's SQL object to reflect that they tied.
+
+    Args:
+        name1 (str): The name of a player
+        name2 (str): The name of a different player
+        conn: The SQL connection object
+        cur: The SQL cursor
+
+    Returns:
+        None
+
+    """
     cur.execute(
         "update player "
         "set matches = matches + 1,"
@@ -32,6 +77,20 @@ def record_tie(name1, name2, conn, cur):
     conn.commit()
 
 def save_match(match, conn, cur):
+    """
+    Save a match to the database
+
+    Save the statistics of a match into the database.
+
+    Args:
+        match (dict): A dictionary holding match information
+        conn: The SQL connection object
+        cur: The SQL cursor
+
+    Returns:
+        None
+
+    """
     cur.execute(
         "insert into match "
         "    ( "
@@ -44,6 +103,19 @@ def save_match(match, conn, cur):
     conn.commit()
 
 def has_player(name, cur):
+    """
+    Determine if database has a player
+
+    Returns a boolean indicating if the given player is in the database.
+
+    Args:
+        name (str): The player's name
+        cur: The SQL cursor
+
+    Returns:
+        True if player is in database, else False
+
+    """
     cur.execute(
         "select True "
         "from player "
@@ -55,6 +127,18 @@ def has_player(name, cur):
         return True
 
 def add_player(name, conn, cur):
+    """
+    Save a player to the database
+
+    Args:
+        match (dict): A dictionary holding match information
+        conn: The SQL connection object
+        cur: The SQL cursor
+
+    Returns:
+        None
+
+    """
     cur.execute(
         "insert into player "
         "    ( "
@@ -66,7 +150,24 @@ def add_player(name, conn, cur):
     conn.commit()
 
 def get_player(name, cur):
-    # TODO: Maybe we want to fetchall() for the user?
+    """
+    Gets a player from the database
+
+    Gets FIRST player with a given name's row from the database. This
+    includes name, matches, wins, losses, ties, win percentage, average
+    win time, average lose time. If two rows with the same name are
+    present, one will be returned.
+
+    Args:
+        name (str): The player's name
+        cur: The SQL cursor
+
+    Returns:
+        player (list): A list of the player features in the order: [name,
+        matches, wins, losses, ties, win percentage, average win time,
+        average lose time]
+
+    """
     cur.execute(
         "select * "
         "from player "
