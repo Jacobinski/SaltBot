@@ -123,9 +123,9 @@ def main():
 
                 # Player win percentage
                 if database.has_player(match['player1'], cur):
-                    print("P1: " + database.get_player_percent_wins(match['player1'], cur))
+                    print("P1: " + str(database.get_player_percent_wins(match['player1'], cur)))
                 if database.has_player(match['player2'], cur):
-                    print("P2: " + database.get_player_percent_wins(match['player2'], cur))
+                    print("P2: " + str(database.get_player_percent_wins(match['player2'], cur)))
 
             elif (prev_status == 'open' and status == 'locked'):
                 print('The match begins!')
