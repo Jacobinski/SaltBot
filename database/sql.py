@@ -177,3 +177,23 @@ def get_player(name, cur):
     if ret == None:
         ret = ""
     return ret
+
+def get_player_percent_wins(name, cur):
+    """
+    Gets a player's percent wins from the database
+
+    Gets FIRST player with a given name's percent wins from the database.
+    If two players with the same name are present, only one will be returned.
+
+    Args:
+        name (str): The player's name
+        cur: The SQL cursor
+
+    Returns:
+        percent wins (float): A win percentage of the given player
+
+    """
+    if has_player(name, cur):
+        return get_player(name, cur)[6]
+    else:
+        return None

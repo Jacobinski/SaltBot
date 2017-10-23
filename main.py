@@ -120,8 +120,12 @@ def main():
                 match['player2'] = site.get_player2_name()
                 match['myplayer'] = site.get_player1_name()
                 match['mybet'] = wager
-                #print(database.get_player(match['player1'], cur))
-                #print(database.get_player(match['player2'], cur))
+
+                # Player win percentage
+                if database.has_player(match['player1'], cur):
+                    print("P1: " + database.get_player_percent_wins(match['player1'], cur))
+                if database.has_player(match['player2'], cur):
+                    print("P2: " + database.get_player_percent_wins(match['player2'], cur))
 
             elif (prev_status == 'open' and status == 'locked'):
                 print('The match begins!')
