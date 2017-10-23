@@ -113,13 +113,14 @@ def main():
 
                 # Place the bet, refresh the status to determine success
                 bet(session, player.P1, wager)
-                placed_bet = True
-                print("Bet " + str(wager) + " on " + match['player1'])
 
                 match['player1'] = site.get_player1_name()
                 match['player2'] = site.get_player2_name()
                 match['myplayer'] = site.get_player1_name()
                 match['mybet'] = wager
+
+                placed_bet = True
+                print("Bet " + str(wager) + " on " + match['player1'])
 
                 # Player win percentage
                 if database.has_player(match['player1'], cur):
