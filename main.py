@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import psycopg2
 
 from match import record_match
-from bet import bet, player, determine_wager
+from bet import bet, player, determine_wager, determine_player
 from state_machine import match_state
 import website
 import database
@@ -109,24 +109,28 @@ def main():
                 print('\nBetting is now open!')
                 print('Balance: ' + str(balance_end))
 
-                wager = determine_wager(balance_end)
-
-                # Place the bet, refresh the status to determine success
-                bet(session, player.P1, wager)
-
                 match['player1'] = site.get_player1_name()
                 match['player2'] = site.get_player2_name()
-                match['myplayer'] = site.get_player1_name()
+
+                wager = determine_wager(balance_end)
+                predicted_winner = determine_player(match['player1'], match['player2'], cur)
+
+                # Place the bet, refresh the status to determine success
+                bet(session, predicted_winner, wager)
+
+                match['myplayer'] = match[predicted_winner.value]
                 match['mybet'] = wager
 
                 placed_bet = True
-                print("Bet " + str(wager) + " on " + match['player1'])
 
                 # Player win percentage
                 if database.has_player(match['player1'], cur):
                     print("P1: " + str(database.get_player_percent_wins(match['player1'], cur)))
                 if database.has_player(match['player2'], cur):
                     print("P2: " + str(database.get_player_percent_wins(match['player2'], cur)))
+                print("P1: " + match['player1'] + " P2: " + match['player2'])
+                print("Bet " + str(wager) + " on " + match['myplayer'])
+
 
             elif (prev_status == 'open' and status == 'locked'):
                 print('The match begins!')

@@ -5,6 +5,8 @@ import json
 import random
 from enum import Enum
 
+import database
+
 URL_BET = 'http://www.saltybet.com/ajax_place_bet.php'
 
 class player(Enum):
@@ -63,3 +65,20 @@ def determine_wager(total_money):
 
     return 500
     #return round(0.005 * total_money)
+
+def determine_player(name1, name2, cur):
+    p1_percent_wins = 0
+    p2_percent_wins = 0
+    predicted_winner = None
+
+    if database.has_player(name1, cur):
+        p1_percent_wins = database.get_player_percent_wins(name1, cur)
+    if database.has_player(name2, cur):
+        p2_percent_wins = database.get_player_percent_wins(name2, cur)
+
+    if p1_percent_wins >= p2_percent_wins:
+        predicted_winner = player.P1
+    else:
+        predicted_winner = player.P2
+
+    return predicted_winner
